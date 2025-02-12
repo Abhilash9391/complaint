@@ -27,6 +27,7 @@ model Complaints {
   user      User     @relation(fields: [userId], references: [id]) 
   status   String   @default("processing")
   complaint String 
+  segment String?
   solution solutions[]
 }
 
