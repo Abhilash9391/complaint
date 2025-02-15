@@ -1,0 +1,96 @@
+.admin-container {
+    max-width: 900px;
+    margin: auto;
+    padding: 20px;
+    font-family: "Arial", sans-serif;
+  }
+  
+  .admin-header {
+    text-align: center;
+    margin-bottom: 30px;
+  }
+  
+  .admin-header h1 {
+    font-size: 28px;
+    color: #333;
+  }
+  
+  .admin-header p {
+    font-size: 16px;
+    color: #666;
+  }
+  
+  /* Segment Section */
+  .segment-section {
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+  }
+  
+  .segment-card {
+    flex: 1;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s;
+    cursor: pointer;
+  }
+  
+  .segment-card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  }
+  
+  .segment-image {
+    width: 100%;
+    height: 160px;
+    object-fit: cover;
+  }
+  
+  .segment-info {
+    padding: 15px;
+    text-align: center;
+  }
+  
+  .segment-info h3 {
+    font-size: 18px;
+    margin: 10px 0;
+    color: #222;
+  }
+  
+  .segment-info p {
+    font-size: 14px;
+    color: #555;
+  }
+  
+  /* Complaints Section */
+  .complaint-section {
+    margin-top: 30px;
+  }
+  
+  .complaint-section h2 {
+    font-size: 22px;
+    margin-bottom: 10px;
+  }
+  
+  .complaint-list {
+    background: #f9f9f9;
+    padding: 15px;
+    border-radius: 10px;
+  }
+  
+  .complaint-item {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  .complaint-item:last-child {
+    border-bottom: none;
+  }
+  
+  .no-complaints {
+    color: #777;
+    text-align: center;
+  }
+  

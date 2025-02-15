@@ -1,0 +1,75 @@
+/* Background Styling */
+.complaint-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: #f5f6fa;
+    padding: 20px;
+}
+
+/* Complaint Box */
+.complaint-box {
+    background: #ffffff;
+    padding: 30px;
+    width: 420px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+/* Title */
+.complaint-title {
+    font-size: 22px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+/* Category Text */
+.complaint-category {
+    font-size: 14px;
+    color: #555;
+    margin-bottom: 15px;
+}
+
+/* Stylish Textarea */
+.complaint-input {
+    width: 100%;
+    height: 100px;
+    padding: 12px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    outline: none;
+    resize: none;
+    transition: border 0.3s ease;
+}
+
+.complaint-input:focus {
+    border: 1px solid #007bff;
+}
+
+/* Button */
+.complaint-btn {
+    width: 100%;
+    padding: 12px;
+    background: #007bff;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-top: 15px;
+    transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.complaint-btn:hover {
+    background: #0056b3;
+    transform: translateY(-2px);
+}
+
+.complaint-btn:active {
+    transform: translateY(0);
+}
