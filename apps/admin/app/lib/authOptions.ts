@@ -1,5 +1,5 @@
 import CredentialsProvider from "next-auth/providers/credentials";
-import { NextAuthOptions, User } from "next-auth";
+import { NextAuthOptions } from "next-auth";
 import { PrismaClient } from "@repo/db/client";
 
 const prisma = new PrismaClient();
@@ -9,12 +9,12 @@ export const adminAuthOptions: NextAuthOptions = {
     CredentialsProvider({
       name: "Admin Credentials",
       credentials: {
-        email: { label: "Email", type: "text" },
+        email: { label: "Email", type: "text", placeholder: "admin@example.com" },
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) {
-          throw new Error("Missing email or password");
+          throw new Error("Email and password are required");
         }
 
         try {
@@ -22,13 +22,14 @@ export const adminAuthOptions: NextAuthOptions = {
             where: { email: credentials.email },
           });
 
-          if (!admin) {
-            throw new Error("Admin not found");
+          if (!admin || admin.password !== credentials.password) {
+            throw new Error("Invalid email or password");
           }
 
           return {
-            id: String(admin.id), 
+            id: String(admin.id),
             name: admin.name,
+            email: admin.email,
             role: "admin",
           };
         } catch (error) {
@@ -38,5 +39,25 @@ export const adminAuthOptions: NextAuthOptions = {
       },
     }),
   ],
+  callbacks: {
+    async session({ session, token }) {
+      return {
+        ...session,
+        user: {
+          ...session.user,
+          id: token.id,
+        },
+      };
+    },
+    async jwt({ token, user }) {
+      if (user) {
+        token.id = user.id;
+      }
+      return token;
+    },
+  },
   secret: process.env.NEXTAUTH_SECRET,
+  session: {
+    strategy: "jwt",
+  },
 };

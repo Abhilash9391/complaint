@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { JSXElementConstructor, Key, ReactElement, ReactNode, ReactPortal, useEffect, useState } from "react";
 import axios from "axios";
 import { useSearchParams } from "next/navigation";
 import SkeletonLoader from "../../../components/skeleton";
-
+import { useSession } from "next-auth/react";
 
 interface Complaint {
   id: number;
@@ -13,10 +13,15 @@ interface Complaint {
   status: string;
   complaint: string;
   segment?: string;
-  solution: { id: number; text: string }[];
+  solution: {
+    solution: string;
+    staff: any;
+    createdAt: string | number | Date; id: number; text: string
+  }[];
 }
 
 export default function GiveSolutionPage() {
+  const { data: session } = useSession();
   const searchParams = useSearchParams();
   const segment = searchParams.get("segment");
 
@@ -24,13 +29,13 @@ export default function GiveSolutionPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedComplaint, setSelectedComplaint] = useState<Complaint | null>(null);
   const [solutionText, setSolutionText] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
- 
+
   useEffect(() => {
     if (!segment) return;
 
@@ -38,6 +43,7 @@ export default function GiveSolutionPage() {
       try {
         const response = await axios.get(`http://localhost:3001/api/getComplaints/?segment=${segment}`);
         setComplaints(response.data);
+        console.log(response.data)
       } catch (err) {
         setError("Failed to fetch complaints. Please try again.");
       } finally {
@@ -48,38 +54,34 @@ export default function GiveSolutionPage() {
     fetchComplaints();
   }, [segment]);
 
-  
+
   const openModal = (complaint: Complaint) => {
     setSelectedComplaint(complaint);
     setIsModalOpen(true);
   };
 
-  
+
   const closeModal = () => {
     setIsModalOpen(false);
     setSolutionText("");
     setSubmitting(false);
   };
 
-  
+
   const submitSolution = async () => {
     if (!selectedComplaint || !solutionText.trim()) return;
 
     setSubmitting(true);
     try {
-      await axios.post(`http://localhost:3001/api/addSolution`, {
-        complaintId: selectedComplaint.id,
+      await axios.post("http://localhost:3001/api/postSolution", {
+        complaintId: Number(selectedComplaint.id),
         solution: solutionText,
+        //@ts-ignore
+        staffId: Number(session?.user?.id)
       });
 
-      
-      setComplaints((prev) =>
-        prev.map((c) =>
-          c.id === selectedComplaint.id
-            ? { ...c, solution: [...c.solution, { id: Date.now(), text: solutionText }] }
-            : c
-        )
-      );
+
+      alert("solution added succesfully")
 
       closeModal();
     } catch (err) {
@@ -90,7 +92,7 @@ export default function GiveSolutionPage() {
     }
   };
 
-  if (loading) return (<><SkeletonLoader/></>)
+  if (loading) return (<><SkeletonLoader /></>)
   if (error) return <p className="text-red-500">{error}</p>;
 
   return (
@@ -105,19 +107,24 @@ export default function GiveSolutionPage() {
               <p><strong>Status:</strong> {complaint.status}</p>
               <p><strong>Filed At:</strong> {new Date(complaint.createdAt).toLocaleString()}</p>
 
-              
+
               {complaint.solution?.length > 0 ? (
                 <div className="solution-section">
                   <strong>Solutions:</strong>
                   <ul>
-                    {complaint.solution.map((sol) => (
-                      <li key={sol.id}>{sol.text}</li>
+                    {complaint.solution.map((sol: { id: Key | null | undefined; solution: string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Promise<string | number | bigint | boolean | ReactPortal | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | null | undefined> | null | undefined; staff: { name: any; }; createdAt: string | number | Date; }) => (
+                      <li key={sol.id}>
+                        <p>{sol.solution}</p>
+                        <p><strong>Given By:</strong> {sol.staff?.name ?? "Unknown"}</p>
+                        <p><strong>At:</strong> {new Date(sol.createdAt).toLocaleString()}</p>
+                      </li>
                     ))}
                   </ul>
                 </div>
               ) : (
                 <p className="no-solution">No solution provided yet.</p>
               )}
+
 
               <button className="open-modal-btn" onClick={() => openModal(complaint)}>
                 Give Solution
@@ -128,8 +135,9 @@ export default function GiveSolutionPage() {
       ) : (
         <p>No complaints found for this segment.</p>
       )}
-
       
+
+
       {isModalOpen && selectedComplaint && (
         <div className="modal-overlay">
           <div className="modal-content">

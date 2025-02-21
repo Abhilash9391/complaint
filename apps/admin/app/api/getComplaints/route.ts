@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { PrismaClient } from "@repo/db/client";
-
-const prisma = new PrismaClient();
+const prisma = new PrismaClient()
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -14,6 +13,14 @@ export async function GET(request: Request) {
   try {
     const complaints = await prisma.complaints.findMany({
       where: { segment },
+      include: {
+        solution: {
+          include: {
+            staff: true, 
+          },
+        },
+      },
+      
     });
 
     return NextResponse.json(complaints);
